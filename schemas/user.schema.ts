@@ -20,3 +20,4 @@ export const loginSchema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
 });
+export type UserFormData = z.infer<typeof userSchema>;
