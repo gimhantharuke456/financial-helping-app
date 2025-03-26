@@ -63,7 +63,9 @@ export const ExpenseList = ({ initialExpenses, userId }: ExpenseListProps) => {
       }
       setIsDialogOpen(false);
       setEditingExpense(null);
+
       await refreshExpenses();
+      window.location.reload();
     } catch (error) {
       console.error(error);
       toast.error("Error saving expense");
@@ -107,20 +109,21 @@ export const ExpenseList = ({ initialExpenses, userId }: ExpenseListProps) => {
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
+    <div className="space-y-4">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
         <Input
           type="text"
           placeholder="Filter by category"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="w-full p-2 border rounded"
+          className="w-full md:w-1/3 bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-blue-500"
         />
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap gap-2 w-full md:w-auto">
           <Button
             onClick={generatePDF}
             variant="outline"
             disabled={isLoading || filteredExpenses.length === 0}
+            className="bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white"
           >
             Generate PDF
           </Button>
@@ -128,14 +131,20 @@ export const ExpenseList = ({ initialExpenses, userId }: ExpenseListProps) => {
             onClick={refreshExpenses}
             variant="outline"
             disabled={isLoading}
+            className="bg-gray-800 border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white"
           >
             Refresh
           </Button>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button onClick={() => setIsDialogOpen(true)}>Add Expense</Button>
+              <Button
+                onClick={() => setIsDialogOpen(true)}
+                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+              >
+                Add Expense
+              </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="bg-gray-800 border-gray-700 text-white">
               <ExpenseForm
                 onSubmit={handleCreateOrUpdateExpense}
                 defaultValues={editingExpense || undefined}
@@ -151,9 +160,9 @@ export const ExpenseList = ({ initialExpenses, userId }: ExpenseListProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="text-center my-4"
+          className="text-center my-4 text-gray-400"
         >
-          Loading...
+          Loading expenses...
         </motion.div>
       )}
       {!isLoading && filteredExpenses.length === 0 && (
@@ -161,7 +170,7 @@ export const ExpenseList = ({ initialExpenses, userId }: ExpenseListProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="text-center my-4 p-8 border border-dashed rounded-lg"
+          className="text-center my-4 p-8 border border-dashed border-gray-700 rounded-lg text-gray-400"
         >
           {filter
             ? "No expenses match your filter"

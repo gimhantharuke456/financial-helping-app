@@ -1,9 +1,9 @@
-// Fixed ExpenseForm.tsx
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { motion } from "framer-motion";
 import { expenseSchema } from "@/schemas/expense.schema";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,7 +24,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Loader2 } from "lucide-react";
 import { useState } from "react";
 
 // Create a form-specific schema that properly handles the form values
@@ -82,108 +82,178 @@ export const ExpenseForm = ({
   };
 
   return (
-    <Form {...form}>
-      <DialogTitle className="mb-4">
-        {defaultValues ? "Edit Expense" : "Add New Expense"}
-      </DialogTitle>
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="bg-gray-800 rounded-xl p-6 shadow-xl backdrop-blur-sm bg-opacity-80"
+    >
+      <Form {...form}>
+        <DialogTitle className="mb-4 text-2xl font-bold text-white">
+          <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+            {defaultValues ? "Edit Expense" : "Add New Expense"}
+          </span>
+        </DialogTitle>
 
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      )}
+        {error && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="bg-red-600 bg-opacity-20 border border-red-500 text-red-300 px-4 py-3 rounded mb-4"
+          >
+            {error}
+          </motion.div>
+        )}
 
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-        <FormField
-          control={form.control}
-          name="amount"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Amount</FormLabel>
-              <FormControl>
-                <Input
-                  type="number"
-                  step="0.01"
-                  placeholder="0.00"
-                  {...field}
-                  onChange={(e) => field.onChange(e.target.valueAsNumber || 0)}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="category"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <FormControl>
-                <Input placeholder="e.g., Food, Transportation" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="date"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel>Date</FormLabel>
-              <Popover>
-                <PopoverTrigger asChild>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+          >
+            <FormField
+              control={form.control}
+              name="amount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-300">Amount</FormLabel>
                   <FormControl>
-                    <Button
-                      variant="outline"
-                      className="w-full justify-start text-left"
-                    >
-                      {field.value ? format(field.value, "PPP") : "Pick a date"}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      {...field}
+                      onChange={(e) =>
+                        field.onChange(e.target.valueAsNumber || 0)
+                      }
+                      className="bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-blue-500"
+                    />
                   </FormControl>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
-                  <Calendar
-                    mode="single"
-                    selected={field.value}
-                    onSelect={field.onChange}
-                    initialFocus
-                  />
-                </PopoverContent>
-              </Popover>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="reason"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Reason (Optional)</FormLabel>
-              <FormControl>
-                <Textarea
-                  placeholder="Why did you make this expense?"
-                  {...field}
-                  value={field.value || ""}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                  <FormMessage className="text-red-400" />
+                </FormItem>
+              )}
+            />
+          </motion.div>
 
-        {/* Hidden field for userId */}
-        <input type="hidden" {...form.register("userId")} value={userId} />
+          <motion.div
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+          >
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-300">Category</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="e.g., Food, Transportation"
+                      {...field}
+                      className="bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-blue-500"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-red-400" />
+                </FormItem>
+              )}
+            />
+          </motion.div>
 
-        <DialogFooter>
-          <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? "Saving..." : "Save"}
-          </Button>
-        </DialogFooter>
-      </form>
-    </Form>
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4, duration: 0.5 }}
+          >
+            <FormField
+              control={form.control}
+              name="date"
+              render={({ field }) => (
+                <FormItem className="flex flex-col">
+                  <FormLabel className="text-gray-300">Date</FormLabel>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <FormControl>
+                        <Button
+                          variant="outline"
+                          className="w-full justify-start text-left bg-gray-700 border-gray-600 text-white hover:bg-gray-600"
+                        >
+                          {field.value
+                            ? format(field.value, "PPP")
+                            : "Pick a date"}
+                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                        </Button>
+                      </FormControl>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar
+                        mode="single"
+                        selected={field.value}
+                        onSelect={field.onChange}
+                        initialFocus
+                        className="bg-gray-800 text-white"
+                      />
+                    </PopoverContent>
+                  </Popover>
+                  <FormMessage className="text-red-400" />
+                </FormItem>
+              )}
+            />
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+          >
+            <FormField
+              control={form.control}
+              name="reason"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-gray-300">
+                    Reason (Optional)
+                  </FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Why did you make this expense?"
+                      {...field}
+                      value={field.value || ""}
+                      className="bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-blue-500"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-red-400" />
+                </FormItem>
+              )}
+            />
+          </motion.div>
+
+          {/* Hidden field for userId */}
+          <input type="hidden" {...form.register("userId")} value={userId} />
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.6, duration: 0.5 }}
+          >
+            <DialogFooter>
+              <Button
+                type="submit"
+                disabled={form.formState.isSubmitting}
+                className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium shadow-md transition-all"
+              >
+                {form.formState.isSubmitting ? (
+                  <div className="flex items-center justify-center">
+                    <Loader2 className="animate-spin h-4 w-4 mr-2" />
+                    Saving...
+                  </div>
+                ) : (
+                  "Save"
+                )}
+              </Button>
+            </DialogFooter>
+          </motion.div>
+        </form>
+      </Form>
+    </motion.div>
   );
 };
