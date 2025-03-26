@@ -48,7 +48,7 @@ export const ExpenseCard = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-gray-800 border-gray-700 border rounded-lg shadow-xl backdrop-blur-sm bg-opacity-80 hover:shadow-2xl transition-all duration-300"
+      className="bg-gray-800 h-[190px] border-gray-700 border rounded-lg shadow-xl backdrop-blur-sm bg-opacity-80 hover:shadow-2xl transition-all duration-300"
     >
       <div className="p-5 space-y-3">
         <div className="flex justify-between items-start">

@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import OpenAI from "openai";
 import { createReadStream } from "fs";
-import formidable from "formidable";
 import { promises as fs } from "fs";
 
 const openai = new OpenAI({
