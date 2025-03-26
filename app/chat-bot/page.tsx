@@ -18,7 +18,6 @@ import { getIncomesByUserId } from "@/services/income.service";
 import { Expense, Income } from "@prisma/client";
 import Navbar from "@/components/Navbar";
 
-// Ensure the API key is set in the environment variables
 const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
 
 if (!apiKey) {
@@ -27,7 +26,6 @@ if (!apiKey) {
   );
 }
 
-// Message component for individual chat messages
 interface MessageProps {
   message: { role: string; content: string };
   isUser: boolean;
@@ -38,57 +36,54 @@ const Message: React.FC<MessageProps> = ({ message, isUser }) => (
     className={`flex gap-3 ${isUser ? "justify-end" : "justify-start"} mb-4`}
   >
     {!isUser && (
-      <Avatar className="h-8 w-8 bg-primary-foreground">
-        <div className="text-xs font-bold">AI</div>
+      <Avatar className="h-8 w-8 bg-gradient-to-r from-blue-500 to-purple-600">
+        <div className="text-xs font-bold text-white">AI</div>
       </Avatar>
     )}
     <div
       className={`p-3 rounded-lg max-w-[80%] ${
-        isUser ? "bg-primary text-primary-foreground" : "bg-muted"
+        isUser
+          ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white"
+          : "bg-gray-700 text-gray-100"
       }`}
     >
       {message.content}
     </div>
     {isUser && (
-      <Avatar className="h-8 w-8 bg-primary">
-        <div className="text-xs font-bold text-primary-foreground">You</div>
+      <Avatar className="h-8 w-8 bg-gray-600">
+        <div className="text-xs font-bold text-white">You</div>
       </Avatar>
     )}
   </div>
 );
 
 const ChatbotPage = () => {
-  const [incomes, setInComes] = useState<Income[]>([]);
-  const [expences, setExpences] = useState<Expense[]>([]);
-
-  const setData = async () => {
-    const [expences, incomes] = await Promise.all([
-      getExpensesByUserId(localStorage.getItem("userId")!),
-      getIncomesByUserId(localStorage.getItem("userId")!),
-    ]);
-    setInComes(incomes);
-    setExpences(expences);
-  };
-
-  useEffect(() => {
-    setData();
-  }, []);
-
+  const [incomes, setIncomes] = useState<Income[]>([]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
   const [messages, setMessages] = useState<
     { role: "assistant" | "user"; content: string }[]
   >([
     {
       role: "assistant",
       content:
-        "Hello! I'm FinanceFusion, an AI assistant powered by OpenAI's o1-mini model. How can I help you today?",
+        "Hello! I'm FinanceFusion, an AI assistant powered by OpenAI. How can I help you with your finances today?",
     },
   ]);
   const [input, setInput] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  // Auto-scroll to bottom when messages change
+  const setData = async () => {
+    const [expenses, incomes] = await Promise.all([
+      getExpensesByUserId(localStorage.getItem("userId")!),
+      getIncomesByUserId(localStorage.getItem("userId")!),
+    ]);
+    setIncomes(incomes);
+    setExpenses(expenses);
+  };
+
   useEffect(() => {
+    setData();
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
@@ -96,9 +91,7 @@ const ChatbotPage = () => {
     e.preventDefault();
     if (!input.trim()) return;
 
-    // Add user message to chat
-    type Message = { role: "assistant" | "user"; content: string };
-    const userMessage: Message = { role: "user", content: input };
+    const userMessage = { role: "user" as const, content: input };
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
@@ -121,32 +114,28 @@ const ChatbotPage = () => {
                 role: "system",
                 content: `You are a financial assistant. Here is the user's financial data: 
                         Incomes: ${JSON.stringify(incomes)}, 
-                        Expenses: ${JSON.stringify(expences)}.
+                        Expenses: ${JSON.stringify(expenses)}.
                         Answer the user's questions related to their finances.`,
               },
             ],
-            temperature: 1,
+            temperature: 0.7,
             max_tokens: 1000,
           }),
         }
       );
 
-      if (!response.ok) {
+      if (!response.ok)
         throw new Error(`API request failed with status ${response.status}`);
-      }
 
       const data = await response.json();
-      const assistantMessage = data.choices[0].message;
-
-      setMessages((prev) => [...prev, assistantMessage]);
+      setMessages((prev) => [...prev, data.choices[0].message]);
     } catch (error) {
       console.error("Error calling OpenAI:", error);
       setMessages((prev) => [
         ...prev,
         {
           role: "assistant",
-          content:
-            "I'm sorry, I encountered an error processing your request. Please try again later.",
+          content: "I'm sorry, I encountered an error. Please try again later.",
         },
       ]);
     } finally {
@@ -155,15 +144,19 @@ const ChatbotPage = () => {
   };
 
   return (
-    <section>
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 to-gray-800">
       <Navbar />
-      <div className="flex items-center justify-center min-h-screen bg-background p-4">
-        <Card className="w-full max-w-2xl flex flex-col">
-          <CardHeader className="border-b">
-            <CardTitle className="text-xl">Chat with FinanceFusion</CardTitle>
+      <div className="container mx-auto p-4 flex items-center justify-center min-h-[calc(100vh-80px)]">
+        <Card className="w-full max-w-2xl bg-gray-800 border-gray-700 shadow-xl">
+          <CardHeader className="border-b border-gray-700">
+            <CardTitle className="text-xl text-white">
+              <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+                FinanceFusion AI
+              </span>
+            </CardTitle>
           </CardHeader>
 
-          <CardContent className="flex-grow p-0 relative">
+          <CardContent className="p-0 h-[500px]">
             <ScrollArea className="h-full p-4">
               {messages.map((message, index) => (
                 <Message
@@ -174,11 +167,11 @@ const ChatbotPage = () => {
               ))}
               {isLoading && (
                 <div className="flex justify-start mb-4">
-                  <Avatar className="h-8 w-8 mr-3 bg-primary-foreground">
-                    <div className="text-xs font-bold">AI</div>
+                  <Avatar className="h-8 w-8 mr-3 bg-gradient-to-r from-blue-500 to-purple-600">
+                    <div className="text-xs font-bold text-white">AI</div>
                   </Avatar>
-                  <div className="p-3 rounded-lg bg-muted">
-                    <Loader2 className="h-5 w-5 animate-spin" />
+                  <div className="p-3 rounded-lg bg-gray-700">
+                    <Loader2 className="h-5 w-5 animate-spin text-gray-400" />
                   </div>
                 </div>
               )}
@@ -186,16 +179,20 @@ const ChatbotPage = () => {
             </ScrollArea>
           </CardContent>
 
-          <CardFooter className="border-t p-4">
+          <CardFooter className="border-t border-gray-700 p-4">
             <form onSubmit={handleSendMessage} className="flex w-full gap-2">
               <Input
                 placeholder="Type your message..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 disabled={isLoading}
-                className="flex-grow"
+                className="flex-grow bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
-              <Button type="submit" disabled={isLoading || !input.trim()}>
+              <Button
+                type="submit"
+                disabled={isLoading || !input.trim()}
+                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
+              >
                 {isLoading ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
@@ -206,7 +203,7 @@ const ChatbotPage = () => {
           </CardFooter>
         </Card>
       </div>
-    </section>
+    </div>
   );
 };
 

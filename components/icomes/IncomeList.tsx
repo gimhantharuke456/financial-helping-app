@@ -106,20 +106,21 @@ export const IncomeList = ({ initialIncomes, userId }: IncomeListProps) => {
   };
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-4">
+    <div className="text-gray-200">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <Input
           type="text"
           placeholder="Filter by source"
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
-          className="w-full p-2 border rounded"
+          className="w-full md:w-64 p-2 bg-gray-700 border-gray-600 rounded-lg text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         />
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap gap-2 w-full md:w-auto">
           <Button
             onClick={generatePDF}
             variant="outline"
             disabled={isLoading || filteredIncomes.length === 0}
+            className="bg-transparent text-white border-gray-600 hover:bg-gray-700 hover:text-white"
           >
             Generate PDF
           </Button>
@@ -127,14 +128,20 @@ export const IncomeList = ({ initialIncomes, userId }: IncomeListProps) => {
             onClick={refreshIncomes}
             variant="outline"
             disabled={isLoading}
+            className="bg-transparent text-white border-gray-600 hover:bg-gray-700 hover:text-white"
           >
             Refresh
           </Button>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button onClick={() => setIsDialogOpen(true)}>Add Income</Button>
+              <Button
+                onClick={() => setIsDialogOpen(true)}
+                className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
+              >
+                Add Income
+              </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="bg-gray-800 border-gray-700 text-white">
               <IncomeForm
                 onSubmit={handleCreateOrUpdateIncome}
                 defaultValues={editingIncome || undefined}
@@ -150,9 +157,10 @@ export const IncomeList = ({ initialIncomes, userId }: IncomeListProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="text-center my-4"
+          className="text-center my-8 text-gray-400"
         >
-          Loading...
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto mb-2"></div>
+          Loading incomes...
         </motion.div>
       )}
       {!isLoading && filteredIncomes.length === 0 && (
@@ -160,7 +168,7 @@ export const IncomeList = ({ initialIncomes, userId }: IncomeListProps) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="text-center my-4 p-8 border border-dashed rounded-lg"
+          className="text-center my-8 p-8 border border-dashed border-gray-700 rounded-lg bg-gray-800/50"
         >
           {filter
             ? "No incomes match your filter"
@@ -170,7 +178,7 @@ export const IncomeList = ({ initialIncomes, userId }: IncomeListProps) => {
 
       <motion.div
         layout
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4"
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6"
       >
         <AnimatePresence>
           {filteredIncomes.map((income) => (
@@ -180,14 +188,13 @@ export const IncomeList = ({ initialIncomes, userId }: IncomeListProps) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               layout
+              transition={{ duration: 0.2 }}
             >
               <IncomeCard
                 income={income}
                 onEdit={() => {
-                  {
-                    setEditingIncome(income);
-                    setIsDialogOpen(true);
-                  }
+                  setEditingIncome(income);
+                  setIsDialogOpen(true);
                 }}
                 onDelete={handleDeleteIncome}
               />

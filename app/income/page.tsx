@@ -1,10 +1,10 @@
 "use client";
-
-import { IncomeList } from "@/components/icomes/IncomeList";
 import Navbar from "@/components/Navbar";
 import { getIncomesByUserId } from "@/services/income.service";
 import { Income } from "@prisma/client";
 import React, { useEffect, useState, useMemo } from "react";
+import { motion } from "framer-motion";
+import { IncomeList } from "@/components/icomes/IncomeList";
 
 const IncomesPage = () => {
   const [userId, setUserId] = useState<string | null>(null);
@@ -19,7 +19,6 @@ const IncomesPage = () => {
         setError(null);
 
         const storedUserId = localStorage.getItem("userId");
-
         if (!storedUserId) {
           setIsLoading(false);
           setError("User ID not found. Please log in again.");
@@ -27,7 +26,6 @@ const IncomesPage = () => {
         }
 
         setUserId(storedUserId);
-
         const fetchedIncomes = await getIncomesByUserId(storedUserId);
         setIncomes(fetchedIncomes);
       } catch (err) {
@@ -45,13 +43,17 @@ const IncomesPage = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col min-h-screen">
+      <div className="min-h-screen bg-gradient-to-br from-gray-800 via-gray-900 to-black">
         <Navbar />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center p-4">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mx-auto mb-4"></div>
-            <p>Loading incomes...</p>
-          </div>
+        <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="text-center"
+          >
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
+            <p className="text-gray-300">Loading incomes...</p>
+          </motion.div>
         </div>
       </div>
     );
@@ -59,31 +61,54 @@ const IncomesPage = () => {
 
   if (error || !userId) {
     return (
-      <div className="flex flex-col min-h-screen">
+      <div className="min-h-screen bg-gradient-to-br from-gray-800 via-gray-900 to-black">
         <Navbar />
-        <div className="flex-1 flex items-center justify-center">
-          <div className="text-center p-4 max-w-md">
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+        <div className="flex items-center justify-center min-h-[calc(100vh-80px)]">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center max-w-md p-6 bg-gray-800 rounded-xl shadow-xl"
+          >
+            <div className="bg-red-900/30 border border-red-700 text-red-400 px-4 py-3 rounded-lg">
               <p>{error || "User ID not found. Please log in again."}</p>
             </div>
             <button
               onClick={() => (window.location.href = "/login")}
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              className="mt-4 px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all"
             >
               Go to Login
             </button>
-          </div>
+          </motion.div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="min-h-screen bg-gradient-to-br from-gray-800 via-gray-900 to-black">
       <Navbar />
-      <div className="flex-1 p-4 md:p-8 lg:p-16">
-        <h1 className="text-2xl font-bold mb-6">My Incomes</h1>
-        <IncomeList initialIncomes={memoizedIncomes} userId={userId} />
+      <div className="container mx-auto p-4 md:p-8 lg:p-12">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-8"
+        >
+          <h1 className="text-3xl font-bold text-white mb-2">
+            <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+              My Incomes
+            </span>
+          </h1>
+          <p className="text-gray-400">Track and analyze your earnings</p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="bg-gray-800/50 backdrop-blur-sm rounded-xl shadow-xl p-4 md:p-6"
+        >
+          <IncomeList initialIncomes={memoizedIncomes} userId={userId} />
+        </motion.div>
       </div>
     </div>
   );

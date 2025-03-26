@@ -22,8 +22,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { CalendarIcon } from "lucide-react";
+import { CalendarIcon, Loader2 } from "lucide-react";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 type FormValues = z.infer<typeof incomeSchema>;
 
@@ -67,12 +68,12 @@ export const IncomeForm = ({
 
   return (
     <Form {...form}>
-      <DialogTitle className="mb-4">
+      <DialogTitle className="mb-4 text-white">
         {defaultValues ? "Edit Income" : "Add New Income"}
       </DialogTitle>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div className="bg-red-900/30 border border-red-700 text-red-400 px-4 py-3 rounded-lg mb-4">
           {error}
         </div>
       )}
@@ -83,17 +84,18 @@ export const IncomeForm = ({
           name="amount"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Amount</FormLabel>
+              <FormLabel className="text-gray-300">Amount</FormLabel>
               <FormControl>
                 <Input
                   type="number"
                   step="0.01"
                   placeholder="0.00"
+                  className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent"
                   {...field}
                   onChange={(e) => field.onChange(e.target.valueAsNumber || 0)}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-red-400" />
             </FormItem>
           )}
         />
@@ -102,11 +104,15 @@ export const IncomeForm = ({
           name="source"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Source</FormLabel>
+              <FormLabel className="text-gray-300">Source</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., Salary, Freelance" {...field} />
+                <Input
+                  placeholder="e.g., Salary, Freelance"
+                  className="bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                  {...field}
+                />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="text-red-400" />
             </FormItem>
           )}
         />
@@ -115,29 +121,45 @@ export const IncomeForm = ({
           name="date"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Date</FormLabel>
+              <FormLabel className="text-gray-300">Date</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
                     <Button
                       variant="outline"
-                      className="w-full justify-start text-left"
+                      className={cn(
+                        "w-full justify-start text-left font-normal bg-gray-700 border-gray-600 hover:bg-gray-600 text-white",
+                        !field.value && "text-gray-400"
+                      )}
                     >
                       {field.value ? format(field.value, "PPP") : "Pick a date"}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-70" />
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto p-0">
+                <PopoverContent className="w-auto p-0 border-gray-700 bg-gray-800">
                   <Calendar
                     mode="single"
                     selected={field.value}
                     onSelect={field.onChange}
                     initialFocus
+                    className="bg-gray-800 text-white"
+                    styles={{
+                      day: {
+                        color: "#e5e7eb", // text-gray-200
+                      },
+                      nav_button: {
+                        backgroundColor: "#374151", // bg-gray-700
+                        color: "#f3f4f6", // text-gray-100
+                      },
+                      head_cell: {
+                        color: "#9ca3af", // text-gray-400
+                      },
+                    }}
                   />
                 </PopoverContent>
               </Popover>
-              <FormMessage />
+              <FormMessage className="text-red-400" />
             </FormItem>
           )}
         />
@@ -146,8 +168,19 @@ export const IncomeForm = ({
         <input type="hidden" {...form.register("userId")} value={userId} />
 
         <DialogFooter>
-          <Button type="submit" disabled={form.formState.isSubmitting}>
-            {form.formState.isSubmitting ? "Saving..." : "Save"}
+          <Button
+            type="submit"
+            disabled={form.formState.isSubmitting}
+            className="bg-gradient-to-r from-green-500 to-teal-600 hover:from-green-600 hover:to-teal-700 text-white"
+          >
+            {form.formState.isSubmitting ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Save"
+            )}
           </Button>
         </DialogFooter>
       </form>
