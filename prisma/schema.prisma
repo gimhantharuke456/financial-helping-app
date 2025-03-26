@@ -23,6 +23,7 @@ model User {
   challenges      Challenge[] // One-to-many relation with Challenge
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
+  points          Int              @default(0)
 }
 
 model Expense {
