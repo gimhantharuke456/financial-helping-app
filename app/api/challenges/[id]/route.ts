@@ -8,9 +8,9 @@ const prisma = new PrismaClient();
 // GET challenge by ID
 export async function GET(
   request: Request,
-  { params }: { params: { id: Promise<string> } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = await params.id;
+  const { id } = await params;
 
   if (!ObjectId.isValid(id)) {
     return NextResponse.json(
@@ -44,9 +44,9 @@ export async function GET(
 // PUT update challenge
 export async function PUT(
   request: Request,
-  { params }: { params: { id: Promise<string> } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = await params.id;
+  const { id } = await params;
 
   if (!ObjectId.isValid(id)) {
     return NextResponse.json(
@@ -86,9 +86,9 @@ export async function PUT(
 // DELETE challenge
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: Promise<string> } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = await params.id;
+  const { id } = await params;
 
   if (!ObjectId.isValid(id)) {
     return NextResponse.json(
