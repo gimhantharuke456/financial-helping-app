@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { UpdateChallengeSchema } from "@/schemas/challenge";
+import { UpdateSpecialPaymentSchema } from "@/schemas/special-payment";
 import { ObjectId } from "bson";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-// GET challenge by ID
+// GET special payment by ID
 export async function GET(
   request: Request,
   { params }: { params: { id: Promise<string> } }
@@ -14,24 +14,24 @@ export async function GET(
 
   if (!ObjectId.isValid(id)) {
     return NextResponse.json(
-      { message: "Invalid challenge ID" },
+      { message: "Invalid special payment ID" },
       { status: 400 }
     );
   }
 
   try {
-    const challenge = await prisma.challenge.findUnique({
+    const specialPayment = await prisma.specialPayment.findUnique({
       where: { id: id },
     });
 
-    if (!challenge) {
+    if (!specialPayment) {
       return NextResponse.json(
-        { message: "Challenge not found" },
+        { message: "Special payment not found" },
         { status: 404 }
       );
     }
 
-    return NextResponse.json(challenge);
+    return NextResponse.json(specialPayment);
   } catch (error) {
     console.error(error);
     return NextResponse.json(
@@ -41,7 +41,7 @@ export async function GET(
   }
 }
 
-// PUT update challenge
+// PUT update special payment
 export async function PUT(
   request: Request,
   { params }: { params: { id: Promise<string> } }
@@ -50,29 +50,30 @@ export async function PUT(
 
   if (!ObjectId.isValid(id)) {
     return NextResponse.json(
-      { message: "Invalid challenge ID" },
+      { message: "Invalid special payment ID" },
       { status: 400 }
     );
   }
 
   const body = await request.json();
-  const validation = UpdateChallengeSchema.safeParse(body);
+  const validation = UpdateSpecialPaymentSchema.safeParse(body);
 
   if (!validation.success) {
     return NextResponse.json(validation.error.errors, { status: 400 });
   }
 
   try {
-    const updatedChallenge = await prisma.challenge.update({
+    const updatedSpecialPayment = await prisma.specialPayment.update({
       where: { id: id },
       data: validation.data,
     });
 
-    return NextResponse.json(updatedChallenge);
+    return NextResponse.json(updatedSpecialPayment);
   } catch (error) {
+    console.error(error);
     if (error instanceof Error && error.message.includes("RecordNotFound")) {
       return NextResponse.json(
-        { message: "Challenge not found" },
+        { message: "Special payment not found" },
         { status: 404 }
       );
     }
@@ -83,7 +84,7 @@ export async function PUT(
   }
 }
 
-// DELETE challenge
+// DELETE special payment
 export async function DELETE(
   request: Request,
   { params }: { params: { id: Promise<string> } }
@@ -92,24 +93,25 @@ export async function DELETE(
 
   if (!ObjectId.isValid(id)) {
     return NextResponse.json(
-      { message: "Invalid challenge ID" },
+      { message: "Invalid special payment ID" },
       { status: 400 }
     );
   }
 
   try {
-    await prisma.challenge.delete({
+    await prisma.specialPayment.delete({
       where: { id: id },
     });
 
     return NextResponse.json(
-      { message: "Challenge deleted successfully" },
+      { message: "Special payment deleted successfully" },
       { status: 200 }
     );
   } catch (error) {
+    console.error(error);
     if (error instanceof Error && error.message.includes("RecordNotFound")) {
       return NextResponse.json(
-        { message: "Challenge not found" },
+        { message: "Special payment not found" },
         { status: 404 }
       );
     }
