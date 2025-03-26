@@ -44,9 +44,9 @@ export async function GET(
 // PUT update special payment
 export async function PUT(
   request: Request,
-  { params }: { params: { id: Promise<string> } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = await params.id;
+  const { id } = await params;
 
   if (!ObjectId.isValid(id)) {
     return NextResponse.json(
@@ -87,9 +87,9 @@ export async function PUT(
 // DELETE special payment
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: Promise<string> } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = await params.id;
+  const { id } = await params;
 
   if (!ObjectId.isValid(id)) {
     return NextResponse.json(

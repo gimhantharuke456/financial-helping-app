@@ -41,6 +41,18 @@ const Navbar = () => {
               {isLoggedIn ? (
                 <>
                   <Link
+                    href="/challenges"
+                    className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                  >
+                    Challenges
+                  </Link>
+                  <Link
+                    href="/special-payments"
+                    className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+                  >
+                    Special Payments
+                  </Link>
+                  <Link
                     href="/chat-bot"
                     className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:text-blue-600 hover:bg-blue-50 transition-colors"
                   >
