@@ -47,55 +47,113 @@ const LoginPage = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="flex items-center justify-center min-h-screen bg-gray-100"
-    >
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-        <h1 className="text-2xl font-bold text-center">Login</h1>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Password</FormLabel>
-                  <FormControl>
-                    <Input type="password" placeholder="Password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" className="w-full">
-              Login
-            </Button>
-          </form>
-        </Form>
-        <p className="text-center">
-          {`Don't have an account?`}{" "}
-          <a href="/register" className="text-blue-500 hover:underline">
-            Register
-          </a>
-        </p>
-      </div>
-    </motion.div>
+    <div className="min-h-screen bg-gradient-to-br from-gray-800 via-gray-900 to-black">
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex items-center justify-center min-h-screen"
+      >
+        <div className="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-xl shadow-xl backdrop-blur-sm bg-opacity-80">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.2, duration: 0.5 }}
+            className="text-center"
+          >
+            <h1 className="text-3xl font-bold text-white mb-2">
+              <span className="bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+                Welcome Back
+              </span>
+            </h1>
+            <p className="text-gray-300">
+              Sign in to your FinanceFusion account
+            </p>
+          </motion.div>
+
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4, duration: 0.5 }}
+              >
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-300">Email</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder="Email"
+                          {...field}
+                          className="bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-blue-500"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-400" />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.6, duration: 0.5 }}
+              >
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-gray-300">Password</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="password"
+                          placeholder="Password"
+                          {...field}
+                          className="bg-gray-700 border-gray-600 text-white focus:ring-2 focus:ring-blue-500"
+                        />
+                      </FormControl>
+                      <FormMessage className="text-red-400" />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+              >
+                <Button
+                  type="submit"
+                  className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-medium shadow-md transition-all"
+                >
+                  Login
+                </Button>
+              </motion.div>
+            </form>
+          </Form>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 0.5 }}
+            className="text-center text-gray-400"
+          >
+            {`Don't have an account?`}{" "}
+            <a
+              href="/register"
+              className="text-blue-400 hover:text-blue-300 hover:underline transition-colors"
+            >
+              Register
+            </a>
+          </motion.div>
+        </div>
+      </motion.div>
+    </div>
   );
 };
 
