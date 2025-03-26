@@ -24,8 +24,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { format } from "date-fns";
-import { CalendarIcon, Loader2 } from "lucide-react";
+import { CalendarIcon, Loader2, Mic } from "lucide-react";
 import { useState } from "react";
+import { VoiceInputModal } from "./VoiceInputModal";
 
 // Create a form-specific schema that properly handles the form values
 const formSchema = z.object({
@@ -53,7 +54,7 @@ export const ExpenseForm = ({
   userId,
 }: ExpenseFormProps) => {
   const [error, setError] = useState<string | null>(null);
-
+  const [voiceModalOpen, setVoiceModalOpen] = useState(false);
   // Prepare default values, ensuring date is a Date object
   const preparedDefaults: Partial<FormValues> = {
     ...defaultValues,
@@ -254,6 +255,27 @@ export const ExpenseForm = ({
           </motion.div>
         </form>
       </Form>
+      <Button
+        type="button"
+        onClick={() => setVoiceModalOpen(true)}
+        variant="outline"
+        className="mb-4 gap-2 bg-gray-700 text-white hover:bg-gray-600"
+      >
+        <Mic className="h-4 w-4" />
+        Voice Input
+      </Button>
+      <VoiceInputModal
+        open={voiceModalOpen}
+        onOpenChange={setVoiceModalOpen}
+        onDataReceived={(data) => {
+          form.setValue("amount", data.amount);
+          form.setValue("category", data.category);
+          form.setValue("date", data.date);
+          if (data.reason) {
+            form.setValue("reason", data.reason);
+          }
+        }}
+      />
     </motion.div>
   );
 };
